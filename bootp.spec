@@ -17,7 +17,7 @@ Patch3:		bootp-2.4.3-pathfix.patch
 Patch4:		bootp-tmprace.patch
 Requires:	inetdaemon
 Requires:	rc-inetd
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 This is a server for the bootp protocol; which allows network
