@@ -1,0 +1,11 @@
+diff -ur bootp-2.4.3.orig/report.c bootp-2.4.3/report.c
+--- bootp-2.4.3.orig/report.c	1994-03-25 14:31:24.000000000 +0100
++++ bootp-2.4.3/report.c	2004-07-18 11:59:55.673400184 +0200
+@@ -10,6 +10,7 @@
+ 
+ #include <stdio.h>
+ #include <syslog.h>
++#include <errno.h>
+ 
+ #include "report.h"
+ 
