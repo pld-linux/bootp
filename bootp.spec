@@ -8,8 +8,6 @@ Version:	2.4.3
 Release:	10
 License:	BSD
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
 Source1:	%{name}.inetd
 Patch0:		%{name}-2.4.3-linux.patch
