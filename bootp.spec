@@ -5,10 +5,10 @@ Summary(pl):	Serwer BOOTP/DHCP wraz z programami pomocniczymi
 Summary(tr):	bootp/DHCP sunucusu ve test programlarý
 Name:		bootp
 Version:	2.4.3
-Release:	11
+Release:	12
 License:	BSD
 Group:		Networking/Daemons
-Source0:	ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.ntplx.net/pub/networking/bootp/%{name}-%{version}.tar.gz
 # Source0-md5:	2a12d862f11908acf84652387be4e03b
 Source1:	%{name}.inetd
 Patch0:		%{name}-2.4.3-linux.patch
@@ -88,6 +88,18 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+if [ -f /var/lock/subsys/rc-inetd ]; then
+    /etc/rc.d/init.d/rc-inetd reload 1>&2
+else
+    echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
+fi
+
+%postun
+if [ -f /var/lock/subsys/rc-inetd ]; then
+    /etc/rc.d/init.d/rc-inetd reload 1>&2
+fi
 
 %files
 %defattr(644,root,root,755)
