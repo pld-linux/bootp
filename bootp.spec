@@ -5,7 +5,7 @@ Summary(pl):	Serwer BOOTP/DHCP wraz z programami pomocniczymi
 Summary(tr):	bootp/DHCP sunucusu ve test programlarý
 Name:		bootp
 Version:	2.4.3
-Release:	10
+Release:	11
 License:	BSD
 Group:		Networking/Daemons
 Source0:	ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
@@ -16,6 +16,7 @@ Patch1:		http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
 Patch2:		%{name}-2.4.3-glibc.patch
 Patch3:		%{name}-2.4.3-pathfix.patch
 Patch4:		%{name}-tmprace.patch
+Patch5:		%{name}-errno.patch
 Requires:	inetdaemon
 Requires:	rc-inetd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -67,6 +68,7 @@ paketinin kullanýmý önerilir
 %patch2 -p1
 %patch3 -p1
 #%patch4 -p1
+%patch5 -p1
 
 %build
 %{__make} linux SYSDEFS="%{rpmcflags}"
