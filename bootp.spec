@@ -79,8 +79,8 @@ touch $RPM_BUILD_ROOT/etc/bootptab
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%attr(600, root, root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
-%attr(755, root, root) %{_sbindir}/*
+%attr(600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
+%attr(755,root,root) %{_sbindir}/*
 %{_mandir}/man[58]/*
 
 %changelog
