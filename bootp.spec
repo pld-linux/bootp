@@ -75,8 +75,11 @@ paketinin kullanýmý önerilir
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/{etc/sysconfig/rc-inetd,%{_sbindir},%{_mandir}/man{5,8}}
 
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
-%{__make} DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir} install.man
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
+%{__make} install.man \
+	DESTDIR=$RPM_BUILD_ROOT \
+	MANDIR=%{_mandir}
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/bootptab
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
