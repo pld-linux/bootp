@@ -8,14 +8,15 @@ Version:	2.4.3
 Release:	10
 License:	BSD
 Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
 Source1:	%{name}.inetd
-Patch0:		bootp-2.4.3-linux.patch
+Patch0:		%{name}-2.4.3-linux.patch
 Patch1:		http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
-Patch2:		bootp-2.4.3-glibc.patch
-Patch3:		bootp-2.4.3-pathfix.patch
-Patch4:		bootp-tmprace.patch
+Patch2:		%{name}-2.4.3-glibc.patch
+Patch3:		%{name}-2.4.3-pathfix.patch
+Patch4:		%{name}-tmprace.patch
 Requires:	inetdaemon
 Requires:	rc-inetd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -49,7 +50,7 @@ support dhcp, car il est beaucoup plus complet.
 %description -l pl
 Pakiet ten zawiera serwer protoko³u bootp, który umo¿liwia zarz±dzanie
 informacjami o konfiguracji sieciowej komputerów w pliku
-/etc/bootptab, a nastêpnie dostarczenie na rz±danie w/w informacji
+/etc/bootptab, a nastêpnie dostarczenie na ¿±danie w/w informacji
 komputerom (klientom). Pomimo, ¿e program oferuje czê¶ciow± obs³ugê
 DHCP, do serwowania informacji przenoszonych za pomoc± tego protoko³u
 lepiej u¿yæ dedykowanego serwera z pakietu dhcp.
@@ -69,7 +70,7 @@ paketinin kullanýmý önerilir
 #%patch4 -p1
 
 %build
-%{__make} linux SYSDEFS="$RPM_OPT_FLAGS"
+%{__make} linux SYSDEFS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -80,10 +81,6 @@ install -d $RPM_BUILD_ROOT/{etc/sysconfig/rc-inetd,%{_sbindir},%{_mandir}/man{5,
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/bootptab
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
-
-strip $RPM_BUILD_ROOT%{_sbindir}/* || :
-
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man{5,8}/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
