@@ -81,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %attr(600, root, root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
 %attr(755, root, root) /usr/sbin/*
-%attr(644, root,  man) /usr/man/man[58]/*
+%attr(644, root,  man) %{_mandir}/man[58]/*
 
 %changelog
 * Wed Nov 13 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
