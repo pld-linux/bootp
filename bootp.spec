@@ -9,6 +9,7 @@ Release:	10
 License:	BSD
 Group:		Networking/Daemons
 Source0:	ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
+# Source0-md5:	2a12d862f11908acf84652387be4e03b
 Source1:	%{name}.inetd
 Patch0:		%{name}-2.4.3-linux.patch
 Patch1:		http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
