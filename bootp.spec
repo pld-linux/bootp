@@ -15,7 +15,7 @@ Patch2:      bootp-2.4.3-glibc.patch
 Patch3:      bootp-2.4.3-pathfix.patch
 Patch4:      bootp-tmprace.patch
 Requires:    inetd
-Buildroot:   /tmp/%{name}-%{version}-root
+BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
 This is a server for the bootp protocol; which allows network
