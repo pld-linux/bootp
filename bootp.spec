@@ -1,7 +1,7 @@
 Summary:	bootp/DHCP server and test programs
 Summary(de):	bootp/DHCP-Server und Testprogramme
 Summary(fr):	Serveur bootp/DHCP et programmes test
-Summary(pl):	Serwer BOOTP/DHCP wraz z programami pomocniczymi
+Summary(pl):	Serwer bootp/DHCP wraz z programami pomocniczymi
 Summary(tr):	bootp/DHCP sunucusu ve test programlarý
 Name:		bootp
 Version:	2.4.3
@@ -91,14 +91,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ -f /var/lock/subsys/rc-inetd ]; then
-    /etc/rc.d/init.d/rc-inetd reload 1>&2
+	/etc/rc.d/init.d/rc-inetd reload 1>&2
 else
-    echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
+	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
 fi
 
 %postun
 if [ -f /var/lock/subsys/rc-inetd ]; then
-    /etc/rc.d/init.d/rc-inetd reload 1>&2
+	/etc/rc.d/init.d/rc-inetd reload 1>&2
 fi
 
 %files
