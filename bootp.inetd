@@ -1,4 +1,4 @@
-SERVICE_NAME=bootp
+SERVICE_NAME=bootps
 SOCK_TYPE=dgram
 PROTOCOL=udp
 PORT=67
