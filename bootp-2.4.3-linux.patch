@@ -21,7 +21,7 @@
 +MANDIR=/usr/man
  
 -CFLAGS= $(OPTDEFS) $(SYSDEFS) $(FILEDEFS) $(MOREDEFS)
-+CFLAGS= $(OPTDEFS) $(SYSDEFS) $(FILEDEFS) $(MOREDEFS)
++CFLAGS= $(OPTDEFS) $(RPM_OPT_FLAGS) $(FILEDEFS) $(MOREDEFS)
  PROGS= bootpd bootpef bootpgw bootptest
  TESTS= trylook trygetif trygetea
  
