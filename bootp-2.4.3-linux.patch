@@ -1,0 +1,47 @@
+--- bootp-2.4.3/bptypes.h.orig	Wed Apr 24 17:18:44 1996
++++ bootp-2.4.3/bptypes.h	Wed Apr 24 17:18:50 1996
+@@ -8,7 +8,7 @@
+  */
+ 
+ #ifndef	int32
+-#define int32 long
++#define int32 int
+ #endif
+ typedef unsigned int32 u_int32;
+ 
+--- bootp-2.4.3/Makefile.orig	Wed Apr 24 17:18:59 1996
++++ bootp-2.4.3/Makefile	Wed Apr 24 20:13:59 1996
+@@ -37,10 +37,10 @@
+ 
+ INSTALL=/usr/bin/install
+ DESTDIR=
+-BINDIR=/usr/etc
+-MANDIR=/usr/local/man
++BINDIR=/usr/sbin
++MANDIR=/usr/man
+ 
+-CFLAGS= $(OPTDEFS) $(SYSDEFS) $(FILEDEFS) $(MOREDEFS)
++CFLAGS= $(OPTDEFS) $(SYSDEFS) $(FILEDEFS) $(MOREDEFS)
+ PROGS= bootpd bootpef bootpgw bootptest
+ TESTS= trylook trygetif trygetea
+ 
+@@ -141,7 +141,7 @@
+ OBJ_D=	bootpd.o dovend.o readfile.o hash.o dumptab.o \
+ 	 lookup.o getif.o hwaddr.o tzone.o report.o $(STRERROR)
+ bootpd: $(OBJ_D)
+-	$(CC) -o $@ $(OBJ_D) $(SYSLIBS)
++	$(CC) -o $@ $(OBJ_D) $(SYSLIBS)
+ 
+ OBJ_EF=	bootpef.o dovend.o readfile.o hash.o dumptab.o \
+ 	 lookup.o hwaddr.o tzone.o report.o $(STRERROR)
+--- bootp-2.4.3/hwaddr.c.orig	Wed Apr 24 17:22:12 1996
++++ bootp-2.4.3/hwaddr.c	Wed Apr 24 20:00:26 1996
+@@ -22,6 +22,8 @@
+ #include <net/if.h> 	/* for struct ifnet in net/if_arp.h */
+ #endif
+ 
++#define MAX_ADDR_LEN 7
++
+ #include <net/if_arp.h>
+ #include <netinet/in.h>
+ 

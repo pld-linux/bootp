@@ -1,0 +1,10 @@
+--- bootp-2.4.3/getether.c.ewt	Thu Jul 10 14:32:20 1997
++++ bootp-2.4.3/getether.c	Thu Jul 10 14:32:25 1997
+@@ -329,7 +329,6 @@
+ #include <memory.h>
+ #include <sys/ioctl.h>
+ #include <net/if.h>	       	/* struct ifreq */
+-#include <sys/socketio.h>	/* Needed for IOCTL defs */
+ 
+ int
+ getether(ifname, eap)

@@ -1,0 +1,25 @@
+diff -Nru bootp-2.4.3/bootpd.c bootp-2.4.3.new/bootpd.c
+--- bootp-2.4.3/bootpd.c	Fri Nov 13 23:40:05 1998
++++ bootp-2.4.3.new/bootpd.c	Fri Nov 13 23:43:12 1998
+@@ -100,9 +100,8 @@
+ #ifndef CONFIG_FILE
+ #define CONFIG_FILE		"/etc/bootptab"
+ #endif
+-#ifndef DUMPTAB_FILE
+-#define DUMPTAB_FILE		"/tmp/bootpd.dump"
+-#endif
++
++char DUMPTAB_FILE [] = "/tmp/bootpd.dump.XXXXXX";
+ 
+ 
+ 
+@@ -388,7 +387,8 @@
+ 
+ 	if (argc > 1)
+ 		bootpd_dump = argv[1];
+-
++	else
++		mktemp(DUMPTAB_FILE);
+ 	/*
+ 	 * Get my hostname and IP address.
+ 	 */

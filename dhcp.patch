@@ -1,0 +1,736 @@
+diff -rc bootp-2.4.2/Announce bootp-2.4.3/Announce
+*** bootp-2.4.2/Announce	Thu Feb 16 21:18:17 1995
+--- bootp-2.4.3/Announce	Thu Mar 16 08:58:23 1995
+***************
+*** 6,11 ****
+--- 6,13 ----
+  
+  New features in version 2.4 include:
+  
++ 	Added static DHCP allocation capabilities.
++ 		Use: :dl=leasetime for DHCP leasetime handouts
+  	Added a simple BOOTP gateway program: bootpgw
+  	Allow host name anywhere IP address is expected.
+  	Automatically lookup the IP address when the name of a
+***************
+*** 49,60 ****
+  	SunOS 4.X (Solaris 1.X)
+  	SunOS 5.X (Solaris 2.X)
+  	System V/386 Rel. 4.0
+  
+  Systems on which others say this code works:
+  	CDC EP/IX (1.4.3, 2.1.1)
+  	DEC Ultrix (4.2, 4.3)
+- 	Linux 1.1.81
+  	OSF/1 (DEC Alpha CPU)
+  
+  Please direct questions, comments, and bug reports to:
+  	<bootp@andrew.cmu.edu>
+--- 51,69 ----
+  	SunOS 4.X (Solaris 1.X)
+  	SunOS 5.X (Solaris 2.X)
+  	System V/386 Rel. 4.0
++ 	Linux 1.1.81
+  
+  Systems on which others say this code works:
+  	CDC EP/IX (1.4.3, 2.1.1)
+  	DEC Ultrix (4.2, 4.3)
+  	OSF/1 (DEC Alpha CPU)
++ 	HP 9000
++ 
++ How to get the latest version:
++ 	ftp firewall.mc.com (anonymous)
++ 	cd /pub
++ 	binary
++ 	get bootp-2.4.2.tar.Z
+  
+  Please direct questions, comments, and bug reports to:
+  	<bootp@andrew.cmu.edu>
+diff -rc bootp-2.4.2/Changes bootp-2.4.3/Changes
+*** bootp-2.4.2/Changes	Thu Feb 16 17:52:06 1995
+--- bootp-2.4.3/Changes	Thu Mar 16 08:24:18 1995
+***************
+*** 2,13 ****
+--- 2,28 ----
+  Date, <email> Real Name
+  	what...
+  
++ --> bootp-2.4.3
++ 
++ 08/07/95  middelin@polyware.iaf.nl (Pauline Middelink)
++ 	Fixed problem while reporting duplicate hardware address in
++ 	readfile.c (kerry@maine.maine.edu)
++ 	Changed some code to allow the giaddr to pass through. Needed
++ 	when the client request is forwarded to us through a gateway.
++ 	(Broadcasting to the gateway will not reach the client)
++ 	
++ 01/26/95  Phil.Packer@bbc.co.uk (Phil.Packer)
++ 	Added dl tag for DHCP lease and rejigged Pauline's codes
++ 	at the end of bootpd.c to allow the setting of explicit leases.
++ 	Added "sco" Makefile target.
++ 	
+  --> bootp-2.4.2
+  
+  01/14/95  middelin@polyware.iaf.nl (Pauline Middelink)
+  	Corrected support for the Linux networking code.
+  	Fixed lots of warnings (gcc -Wall)
+  	Added "linux" Makefile target.
++ 	Written code for DHCP static IP allocation.
+  
+  01/02/95  Jukka Ukkonen <ukkonen@csc.fi>
+  	Allow bootptab syntax: ha="0:0:c0:80:e8:a7"
+diff -rc bootp-2.4.2/Makefile bootp-2.4.3/Makefile
+*** bootp-2.4.2/Makefile	Thu Feb 16 16:25:19 1995
+--- bootp-2.4.3/Makefile	Thu Mar 16 08:52:30 1995
+***************
+*** 9,15 ****
+  # OPTion DEFinitions:
+  # Remove the -DVEND_CMU if you don't wish to support the "CMU vendor format"
+  # in addition to the RFC1048 format.  Leaving out DEBUG saves little.
+! OPTDEFS= -DSYSLOG -DVEND_CMU -DDEBUG
+  
+  # Uncomment and edit this to choose the facility code used for syslog.
+  # LOG_FACILITY= "-DLOG_BOOTP=LOG_LOCAL2"
+--- 9,16 ----
+  # OPTion DEFinitions:
+  # Remove the -DVEND_CMU if you don't wish to support the "CMU vendor format"
+  # in addition to the RFC1048 format.  Leaving out DEBUG saves little.
+! # Remove the -DDHCP if you don't need DHCP support.
+! OPTDEFS= -DSYSLOG -DVEND_CMU -DDHCP -DDEBUG
+  
+  # Uncomment and edit this to choose the facility code used for syslog.
+  # LOG_FACILITY= "-DLOG_BOOTP=LOG_LOCAL2"
+***************
+*** 95,103 ****
+  		SYSDEFS="-DSVR4" \
+  		SYSLIBS="-lsocket -lnsl"
+  
+! # Linux 1.1.80+ on [34]86
+  linux:
+! 	$(MAKE) SYSDEFS="-O6 -Wall -fomit-frame-pointer"
+  
+  # SunOS 4.X
+  sunos4:
+--- 96,111 ----
+  		SYSDEFS="-DSVR4" \
+  		SYSLIBS="-lsocket -lnsl"
+  
+! # Linux 1.1.80+
+  linux:
+! 	$(MAKE) SYSDEFS="-O6 -Wall -fomit-frame-pointer" \
+! 		SYSLIBS="" \
+! 		FILEDEFS='-DCONFIG_FILE=\"/etc/bootptab\" \
+! 			  -DDUMPTAB_FILE=\"/tmp/bootpd.dump\"'
+! 
+! # SCO (pah!) SYSV rel 3.2
+! sco:
+! 	$(MAKE) CC="cc" SYSLIBS="-lsocket"
+  
+  # SunOS 4.X
+  sunos4:
+diff -rc bootp-2.4.2/bootp.h bootp-2.4.3/bootp.h
+*** bootp-2.4.2/bootp.h	Mon Aug 22 18:49:17 1994
+--- bootp-2.4.3/bootp.h	Thu Mar 16 08:17:22 1995
+***************
+*** 122,129 ****
+  #define TAG_NIS_SERVER		((unsigned char)  41)
+  #define TAG_NTP_SERVER		((unsigned char)  42)
+  /* DHCP maximum message size. */
+  #define TAG_MAX_MSGSZ		((unsigned char)  57)
+! 
+  /* XXX - Add new tags here */
+  
+  
+--- 122,133 ----
+  #define TAG_NIS_SERVER		((unsigned char)  41)
+  #define TAG_NTP_SERVER		((unsigned char)  42)
+  /* DHCP maximum message size. */
++ #define TAG_DHCP_IPLEASE	((unsigned char)  51)
++ #define TAG_DHCP_MSG	   	((unsigned char)  53)
++ #define TAG_DHCP_SERVERID	((unsigned char)  54)
+  #define TAG_MAX_MSGSZ		((unsigned char)  57)
+! #define TAG_DHCP_IPRENEW	((unsigned char)  58)	/* PeP hic facet */
+! #define TAG_DHCP_IPREBIND	((unsigned char)  59)
+  /* XXX - Add new tags here */
+  
+  
+diff -rc bootp-2.4.2/bootpd.c bootp-2.4.3/bootpd.c
+*** bootp-2.4.2/bootpd.c	Wed Feb 15 22:21:58 1995
+--- bootp-2.4.3/bootpd.c	Thu Mar 16 08:31:12 1995
+***************
+*** 76,81 ****
+--- 76,90 ----
+  # define bzero(p,l)      memset(p,0,l)
+  # define bcmp(a,b,c)     memcmp(a,b,c)
+  #endif
++ #ifdef __linux__
++ /* Use sigaction to make signal last... */
++ inline void (*signal(int sig,void (*handler)(int)))(int) {
++ 	struct sigaction so,sa = {NULL,0,SA_NOMASK|SA_RESTART,NULL};
++ 	sa.sa_handler = handler;
++ 	if (sigaction(sig,&sa,&so)<0) return NULL;
++ 	return so.sa_handler;
++ }
++ #endif
+  
+  #include "bootp.h"
+  #include "hash.h"
+***************
+*** 114,125 ****
+  #ifdef VEND_CMU
+  PRIVATE void dovend_cmu P((struct bootp *, struct host *));
+  #endif
+! PRIVATE void dovend_rfc1048 P((struct bootp *, struct host *, int32));
+  PRIVATE void handle_reply P((void));
+  PRIVATE void handle_request P((void));
+  PRIVATE void sendreply P((int forward, int32 dest_override));
+  PRIVATE void usage P((void));
+  
+  #undef	P
+  
+  /*
+--- 123,144 ----
+  #ifdef VEND_CMU
+  PRIVATE void dovend_cmu P((struct bootp *, struct host *));
+  #endif
+! PRIVATE int  dovend_rfc1048 P((struct bootp *, struct host *, int32));
+  PRIVATE void handle_reply P((void));
+  PRIVATE void handle_request P((void));
+  PRIVATE void sendreply P((int forward, int32 dest_override));
+  PRIVATE void usage P((void));
+  
++ #ifdef DHCP
++ PRIVATE int dhcp_discover P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_request P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_decline P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_release P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_offer P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_ack P((struct bootp *, struct host *, byte *, int));
++ PRIVATE int dhcp_lease P((struct bootp *, struct host *, byte **));
++ #endif
++ 
+  #undef	P
+  
+  /*
+***************
+*** 477,482 ****
+--- 496,512 ----
+  		bootpc_port = (u_short) IPPORT_BOOTPC;
+  	}
+  
++ #ifdef DHCP
++ 	/*
++ 	 * Maybe we have to broadcast, so enable it.
++ 	 */
++ 	n = 1;
++ 	if (setsockopt(s,SOL_SOCKET,SO_BROADCAST,&n,sizeof(n))<0) {
++ 		report(LOG_ERR, "setsockopt: %s\n", get_errmsg());
++ 		exit(1);
++ 	}
++ #endif
++ 
+  	/*
+  	 * Set up signals to read or dump the table.
+  	 */
+***************
+*** 701,707 ****
+  					   haddrtoa(bp->bp_chaddr, bp->bp_hlen));
+  			return; /* not found */
+  		}
+- 		(bp->bp_yiaddr).s_addr = hp->iaddr.s_addr;
+  
+  	} else {
+  
+--- 731,736 ----
+***************
+*** 724,729 ****
+--- 753,759 ----
+  			return;
+  		}
+  	}
++ 	(bp->bp_yiaddr).s_addr = hp->iaddr.s_addr;
+  
+  	if (debug) {
+  		report(LOG_INFO, "found %s (%s)", inet_ntoa(hp->iaddr),
+***************
+*** 961,967 ****
+  	 */
+  	if (!bcmp(bp->bp_vend, vm_rfc1048, 4)) {
+  		/* RFC1048 conformant bootp client */
+! 		dovend_rfc1048(bp, hp, bootsize);
+  		if (debug > 1) {
+  			report(LOG_INFO, "sending reply (with RFC1048 options)");
+  		}
+--- 991,998 ----
+  	 */
+  	if (!bcmp(bp->bp_vend, vm_rfc1048, 4)) {
+  		/* RFC1048 conformant bootp client */
+! 		if (!dovend_rfc1048(bp, hp, bootsize))
+! 			return;
+  		if (debug > 1) {
+  			report(LOG_INFO, "sending reply (with RFC1048 options)");
+  		}
+***************
+*** 1093,1098 ****
+--- 1124,1137 ----
+  		/* Finally, set the server address field. */
+  		bp->bp_siaddr = siaddr;
+  	}
++ #ifdef DHCP
++ 	/*
++ 	 * This code is placed here, because otherwise the siaddr
++ 	 * will not be found...
++ 	 */
++ 	if (ntohs(bp->bp_flags) & 0x8000 && bp->bp_giaddr.s_addr==0)
++ 		dst.s_addr = INADDR_BROADCAST;
++ #endif
+  	/* Set up socket address for send. */
+  	send_addr.sin_family = AF_INET;
+  	send_addr.sin_port = htons(port);
+***************
+*** 1220,1228 ****
+  	if (bytesleft < (LEN)) { \
+  		report(LOG_NOTICE, noroom, \
+  			   hp->hostname->string, MSG); \
+! 		return; \
+  	} while (0)
+! PRIVATE void
+  dovend_rfc1048(bp, hp, bootsize)
+  	struct bootp *bp;
+  	struct host *hp;
+--- 1259,1267 ----
+  	if (bytesleft < (LEN)) { \
+  		report(LOG_NOTICE, noroom, \
+  			   hp->hostname->string, MSG); \
+! 		return 0; \
+  	} while (0)
+! PRIVATE int
+  dovend_rfc1048(bp, hp, bootsize)
+  	struct bootp *bp;
+  	struct host *hp;
+***************
+*** 1230,1235 ****
+--- 1269,1278 ----
+  {
+  	int bytesleft, len;
+  	byte *vp;
++ #ifdef DHCP
++ 	int dhcp = 0;
++ 	int isme = TRUE;	/* DHCP uses this for not-mine-requests */
++ #endif
+  
+  	static char noroom[] = "%s: No room for \"%s\" option";
+  
+***************
+*** 1280,1286 ****
+  				case TAG_SUBNET_MASK:
+  					/* XXX - Should preserve this if given... */
+  					break;
+! 				} /* swtich */
+  				p += len;
+  			}
+  
+--- 1323,1335 ----
+  				case TAG_SUBNET_MASK:
+  					/* XXX - Should preserve this if given... */
+  					break;
+! 				case TAG_DHCP_MSG:
+! 					dhcp = *p;
+! 					break;
+! 				case TAG_DHCP_SERVERID:
+! 					isme = (len==4) && my_ip_addr.s_addr == ((struct in_addr *)p)->s_addr;
+! 					break;
+! 				} /* switch */
+  				p += len;
+  			}
+  
+***************
+*** 1347,1362 ****
+  		vp += len;
+  		*vp++ = TAG_END;
+  		bytesleft -= len + 3;
+! 		return;					/* no more options here. */
+  	}
+  	/*
+! 	 * The remaining options are inserted by the following
+! 	 * function (which is shared with bootpef.c).
+! 	 * Keep back one byte for the TAG_END.
+  	 */
+! 	len = dovend_rfc1497(hp, vp, bytesleft - 1);
+! 	vp += len;
+! 	bytesleft -= len;
+  
+  	/* There should be at least one byte left. */
+  	NEED(1, "(end)");
+--- 1396,1439 ----
+  		vp += len;
+  		*vp++ = TAG_END;
+  		bytesleft -= len + 3;
+! 		return 1;				/* no more options here. */
+  	}
++ 
++ #ifdef DHCP
+  	/*
+! 	 * Check if this is a DHCP request.
+  	 */
+! 	if (dhcp!=0) {
+! 		if (!isme)
+! 			return 0;	/* Not mine, discard! */
+! 
+! 		switch (dhcp) {
+! 		 case 1 : len = dhcp_discover(bp,hp,vp,bytesleft-1); break;
+! 		 case 3 : len = dhcp_request(bp,hp,vp,bytesleft-1); break;
+! 		 case 4 : len = dhcp_decline(bp,hp,vp,bytesleft-1); break;
+! 		 case 7 : len = dhcp_release(bp,hp,vp,bytesleft-1); break;
+! 		 default : report(LOG_NOTICE,"Unknown DHCP request (%d)",dhcp);
+! 			   return 0;
+! 		}
+! 		/* Is there a DHCP reply at all? */
+! 		if (len==0)
+! 			return 0;
+! 		vp += len;
+! 		bytesleft -= len;
+! 	}
+! 	else {
+! #endif
+! 		/*
+! 		 * The remaining options are inserted by the following
+! 		 * function (which is shared with bootpef.c).
+! 		 * Keep back one byte for the TAG_END.
+! 		 */
+! 		len = dovend_rfc1497(hp, vp, bytesleft - 1);
+! 		vp += len;
+! 		bytesleft -= len;
+! #ifdef DHCP
+! 	}
+! #endif
+  
+  	/* There should be at least one byte left. */
+  	NEED(1, "(end)");
+***************
+*** 1370,1375 ****
+--- 1447,1453 ----
+  		 */
+  		bzero(vp, bytesleft);
+  	}
++ 	return 1;	/* sent reply */
+  } /* dovend_rfc1048 */
+  #undef	NEED
+  
+***************
+*** 1389,1394 ****
+--- 1467,1637 ----
+   */
+  
+  /* get_errmsg() - now in report.c */
++ 
++ 
++ #ifdef DHCP
++ 
++ /*
++  * PeP hic facet
++  * Stuff the packet with the Lease info, We need to do this on the Offer and
++  * the ack so separated out here
++  */
++ PRIVATE
++ int dhcp_lease(bp, hp, vp)
++     struct bootp *bp;
++     struct host *hp;
++     byte **vp;
++ {
++ 	*(*vp)++ = TAG_DHCP_IPRENEW;	/* DHCP Renewal time 50% of lease */
++ 	*(*vp)++ = 4;			/* Length */
++ 	insert_u_long(htonl(hp->dhcp_lease/2),vp);
++ 
++ 	*(*vp)++ = TAG_DHCP_IPREBIND;	/* DHCP Rebinding time 85% of lease */
++ 	*(*vp)++ = 4;
++ 	insert_u_long(htonl(hp->dhcp_lease*7/8),vp);
++ 	
++ 	*(*vp)++ = TAG_DHCP_IPLEASE;	/* IP address lease time */
++ 	*(*vp)++ = 4;			/* Length */
++ 	insert_u_long(htonl(hp->dhcp_lease),vp); /* PeP hic facet, lets see if this works */
++ 
++ 	return(19);
++ }
++ 
++ 
++ /*
++  * Formulate an DHCP_DISCOVER reply
++  */
++ PRIVATE
++ int dhcp_discover(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	if(debug)
++ 		report(LOG_INFO, "Received: DHCPDISCOVER");
++ 	return(dhcp_offer(bp,hp,vp,bytesleft));
++ }
++ 
++ /*
++  * formulate an DHCP_RELEASE reply
++  */
++ PRIVATE
++ int dhcp_release(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	if (debug)
++ 		report(LOG_INFO, "Received: DHCPRELEASE (discarded)");
++ 	return 0;
++ }
++ 
++ PRIVATE
++ int dhcp_offer(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	int len=0;
++ 	if (debug)
++ 		report(LOG_INFO, "Sent: DHCPOFFER");
++ 
++ 	bp->bp_secs = bp->bp_hops = 0;
++ 	bp->bp_ciaddr.s_addr = 0;
++ 
++ 	*vp++ = TAG_DHCP_MSG;		/* DHCP */
++ 	*vp++ = 1;			/* length */
++ 	*vp++ = 2;			/* DHCPOFFER */
++ 	len +=  3;	
++ 
++ 	len += dhcp_lease(bp,hp,&vp);
++ 
++ 	*vp++ = TAG_DHCP_SERVERID;
++ 	*vp++ = 4;
++ 	insert_u_long(my_ip_addr.s_addr,&vp);
++ 	len += 6;
++ 
++ 	return len + dovend_rfc1497(hp, vp, bytesleft - len);
++ }
++ 
++ /*
++  * Formulate an DHCP_REQUEST reply
++  */
++ PRIVATE
++ int dhcp_request(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	bp->bp_secs = bp->bp_hops = 0;
++ 
++ 	if(debug)
++ 		report(LOG_INFO,"Received: DHCPREQUEST");
++ 	/*
++ 	 * Make absolutely sure that if the client requests an address,
++ 	 * it is its own address, and also make sure the hardware
++ 	 * addresses match perfectly. We want to minimize spoofing!
++ 	 */
++ 	if ((bp->bp_ciaddr.s_addr && bp->bp_ciaddr.s_addr!=bp->bp_yiaddr.s_addr) ||
++ 	    bp->bp_htype != hp->htype ||
++             bcmp(bp->bp_chaddr, hp->haddr, haddrlength(hp->htype))) {
++ 		if (debug)
++ 			report(LOG_INFO, "Sent: DHCPNAK");
++ 
++ 		*vp++ = TAG_DHCP_MSG;	/* DHCPNAK */
++ 		*vp++ = 1;
++ 		*vp++ = 6;
++ 		return 3;
++ 	}
++ 	else 
++ 		return(dhcp_ack(bp,hp,vp,bytesleft));	
++ }
++ 
++ PRIVATE
++ int dhcp_ack(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	int len=0;
++ 	if (debug)
++ 		report(LOG_INFO, "Sent: DHCPACK");
++ 
++ 	*vp++ = TAG_DHCP_MSG;	/* DHCPACK */
++ 	*vp++ = 1;
++ 	*vp++ = 5;
++ 	len += 3;
++ 
++ 	len += dhcp_lease(bp,hp,&vp);
++ 
++ 	*vp++ = TAG_DHCP_SERVERID;	/* Server id */
++ 	*vp++ = 4;
++ 	insert_u_long(my_ip_addr.s_addr,&vp);
++ 	len += 6;
++ 
++ 	return len + dovend_rfc1497(hp, vp, bytesleft - len);
++ }
++ 
++ /*
++  * formulate an DHCP_DECLINE reply
++  */
++ PRIVATE
++ int dhcp_decline(bp, hp, vp, bytesleft)
++     struct bootp *bp;
++     struct host *hp;
++     byte *vp;
++     int bytesleft;
++ {
++ 	if (debug)
++ 		report(LOG_INFO, "Recived: DHCPDECLINE (ignored)");
++ 	return 0;
++ }
++ #endif
+  
+  /*
+   * Local Variables:
+diff -rc bootp-2.4.2/bootpd.h bootp-2.4.3/bootpd.h
+*** bootp-2.4.2/bootpd.h	Thu Jul 28 00:30:29 1994
+--- bootp-2.4.3/bootpd.h	Thu Mar 16 08:17:23 1995
+***************
+*** 126,131 ****
+--- 126,134 ----
+  		exec_file	:1,
+  		msg_size	:1,
+  		min_wait	:1,
++ #ifdef DHCP
++ 		dhcp_lease	:1,	/* PeP hic facet */
++ #endif
+  		/* XXX - Add new tags here */
+  		vm_cookie	:1;
+  };
+***************
+*** 184,189 ****
+--- 187,195 ----
+      unsigned int32	    bootsize,
+  			    msg_size,
+  			    min_wait;
++ #ifdef DHCP
++     unsigned int32	    dhcp_lease; /* PeP hic facet */
++ #endif
+      struct in_addr	    bootserver,
+  			    iaddr,
+  			    swap_server,
+diff -rc bootp-2.4.2/bootptest.c bootp-2.4.3/bootptest.c
+*** bootp-2.4.2/bootptest.c	Thu Feb 16 16:36:25 1995
+--- bootp-2.4.3/bootptest.c	Thu Mar 16 08:17:36 1995
+***************
+*** 50,55 ****
+--- 50,58 ----
+  #include <unistd.h>
+  #endif
+  
++ #ifndef	NO_UNISTD
++ #include <unistd.h>
++ #endif
+  #include <stdlib.h>
+  #include <signal.h>
+  #include <stdio.h>
+***************
+*** 66,71 ****
+--- 69,77 ----
+  
+  #include "patchlevel.h"
+  
++ static void send_request();
++ 
++ extern int getether();
+  static void send_request();
+  
+  #define LOG_ERR 1
+diff -rc bootp-2.4.2/print-bootp.c bootp-2.4.3/print-bootp.c
+*** bootp-2.4.2/print-bootp.c	Wed Feb 15 23:21:13 1995
+--- bootp-2.4.3/print-bootp.c	Thu Mar 16 08:41:15 1995
+***************
+*** 268,274 ****
+  	"iXW-FS",			/* 48: X Window System Font Servers */
+  	"iXW-DM",			/* 49: X Window System Display Managers */
+  
+! 	/* DHCP extensions (RFC-1533, sect. 9) */
+  #endif
+  };
+  #define	KNOWN_OPTIONS (sizeof(rfc1048_opts) / sizeof(rfc1048_opts[0]))
+--- 268,279 ----
+  	"iXW-FS",			/* 48: X Window System Font Servers */
+  	"iXW-DM",			/* 49: X Window System Display Managers */
+  
+! 	/* DHCP extensions (RFC-1533, sect. 9) PeP hic facet */
+! 	"iDHCPreq",			/* 50: DHCP requested IP address */
+! 	"lDHCPlease",			/* 51: DHCP lease time */ 
+! 	"bDHCPooptol",			/* 52: DHCP option overload */
+! 	"bDHCPtype",			/* 53: DHCP message type */
+! 	"iDHCPSid",			/* 54: DHCP server ID */
+  #endif
+  };
+  #define	KNOWN_OPTIONS (sizeof(rfc1048_opts) / sizeof(rfc1048_opts[0]))
+diff -rc bootp-2.4.2/readfile.c bootp-2.4.3/readfile.c
+*** bootp-2.4.2/readfile.c	Wed Feb 15 21:45:25 1995
+--- bootp-2.4.3/readfile.c	Thu Mar 16 08:46:17 1995
+***************
+*** 113,118 ****
+--- 113,121 ----
+  #define SYM_EXEC_FILE		 33	/* YORK_EX_OPTION */
+  #define SYM_MSG_SIZE 		 34
+  #define SYM_MIN_WAIT		 35
++ #define SYM_DHCP_LEASE		 36	/* RFC 1533 PeP hic facet */
++ #define SYM_DHCP_IPRENEW	 37
++ #define SYM_DHCP_IPREBIND	 38
+  /* XXX - Add new tags here */
+  
+  #define OP_ADDITION		  1	/* Operations on tags */
+***************
+*** 161,166 ****
+--- 164,172 ----
+  	{"df", SYM_DUMP_FILE},
+  	{"dn", SYM_DOMAIN_NAME},
+  	{"ds", SYM_DOMAIN_SERVER},
++ #ifdef DHCP
++ 	{"dl", SYM_DHCP_LEASE},		/* PeP hic facet */
++ #endif
+  	{"ef", SYM_EXTEN_FILE},
+  	{"ex", SYM_EXEC_FILE},		/* YORK_EX_OPTION */
+  	{"gw", SYM_GATEWAY},
+***************
+*** 1125,1131 ****
+  		PARSE_UINT(min_wait);
+  		break;
+  
+! 		/* XXX - Add new tags here */
+  
+  	default:
+  		return E_UNKNOWN_SYMBOL;
+--- 1131,1146 ----
+  		PARSE_UINT(min_wait);
+  		break;
+  
+! #ifdef DHCP		
+! 	/* PeP hic facet. */			
+! 	case SYM_DHCP_LEASE:
+! 		PARSE_UINT(dhcp_lease);
+! 		break;
+! 
+! 		/* XXX - Add new DHCP tags here */
+! #endif
+! 
+! 	/* XXX - Add new tags here */
+  
+  	default:
+  		return E_UNKNOWN_SYMBOL;
+***************
+*** 1506,1511 ****
+--- 1521,1527 ----
+  	DUP_COPY(min_wait);
+  
+  	/* XXX - Add new tags here */
++ 	DUP_COPY(dhcp_lease); /* PeP hic facet */
+  
+  	DUP_LINK(generic);
+  
+
