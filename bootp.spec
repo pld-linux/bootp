@@ -8,7 +8,7 @@ Version:     2.4.3
 Release:     9
 Copyright:   BSD
 Group:       Networking/Daemons
-Source:      ftp://ftp.mc.com/pub/%{name}-%{version}.tar.Z
+Source:      ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
 Patch:       bootp-2.4.3-linux.patch
 Patch1:      http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
 Patch2:      bootp-2.4.3-glibc.patch
