@@ -1,20 +1,20 @@
-Summary:     bootp/DHCP server and test programs
-Summary(de): bootp/DHCP-Server und Testprogramme
-Summary(fr): Serveur bootp/DHCP et programmes test
-Summary(pl): Serwer BOOTP/DHCP wraz z programami pomocniczymi
-Summary(tr): bootp/DHCP sunucusu ve test programlarý
-Name:        bootp
-Version:     2.4.3
-Release:     9
-Copyright:   BSD
-Group:       Networking/Daemons
-Source:      ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
-Patch:       bootp-2.4.3-linux.patch
-Patch1:      http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
-Patch2:      bootp-2.4.3-glibc.patch
-Patch3:      bootp-2.4.3-pathfix.patch
-Patch4:      bootp-tmprace.patch
-Requires:    inetd
+Summary:	bootp/DHCP server and test programs
+Summary(de):	bootp/DHCP-Server und Testprogramme
+Summary(fr):	Serveur bootp/DHCP et programmes test
+Summary(pl):	Serwer BOOTP/DHCP wraz z programami pomocniczymi
+Summary(tr):	bootp/DHCP sunucusu ve test programlarý
+Name:		bootp
+Version:	2.4.3
+Release:	10
+Copyright:	BSD
+Group:		Networking/Daemons
+Source:		ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
+Patch:		bootp-2.4.3-linux.patch
+Patch1:		http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
+Patch2:		bootp-2.4.3-glibc.patch
+Patch3:		bootp-2.4.3-pathfix.patch
+Patch4:		bootp-tmprace.patch
+Requires:	inetd
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -64,16 +64,20 @@ DHCP desteðine gerek duyulan durumlarda dhcpd paketinin kullanýmý önerilir
 #%patch4 -p1
 
 %build
-make linux
+make linux SYSDEFS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{etc,usr/{sbin,man/man{5,8}}}
+install -d $RPM_BUILD_ROOT/{etc,%{_sbindir},%{_mandir}/man{5,8}}
 
 make DESTDIR=$RPM_BUILD_ROOT install
-make DESTDIR=$RPM_BUILD_ROOT install.man
+make DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir} install.man
 
 touch $RPM_BUILD_ROOT/etc/bootptab
+
+strip $RPM_BUILD_ROOT%{_sbindir}/* || :
+
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man{5,8}/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
