@@ -1,6 +1,7 @@
 SERVICE_NAME=bootp
 SOCK_TYPE=dgram
 PROTOCOL=udp
+PORT=67
 FLAGS=wait
 USER=root
 SERVER=tcpd
