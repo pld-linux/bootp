@@ -9,12 +9,14 @@ Release:	10
 Copyright:	BSD
 Group:		Networking/Daemons
 Source:		ftp://ftp.mc.com/pub/%{name}-%{version}.tar.gz
+Source1:	%{name}.inetd
 Patch:		bootp-2.4.3-linux.patch
 Patch1:		http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
 Patch2:		bootp-2.4.3-glibc.patch
 Patch3:		bootp-2.4.3-pathfix.patch
 Patch4:		bootp-tmprace.patch
-Requires:	inetd
+Requires:	inetdaemon
+Requires:	rc-inetd
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -68,12 +70,13 @@ make linux SYSDEFS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{etc,%{_sbindir},%{_mandir}/man{5,8}}
+install -d $RPM_BUILD_ROOT/{etc/sysconfig/rc-inetd,%{_sbindir},%{_mandir}/man{5,8}}
 
 make DESTDIR=$RPM_BUILD_ROOT install
 make DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir} install.man
 
 touch $RPM_BUILD_ROOT/etc/bootptab
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
 
 strip $RPM_BUILD_ROOT%{_sbindir}/* || :
 
@@ -83,6 +86,7 @@ gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man{5,8}/*
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%attr(600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
+%attr(640,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
+%attr(640,root,root) /etc/sysconfig/rc-inetd/bootp
 %attr(755,root,root) %{_sbindir}/*
 %{_mandir}/man[58]/*
