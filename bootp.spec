@@ -99,7 +99,7 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Aug 29 1998 Marcin Korzonek <mkorz@shadow.eu.org>
   [2.4.3-8]
 - added pl translation,
-- added %attr and %defattr macros in %files (allow build package from
+- added %attr and %defattr macros in %files (allows build package from
   non-root account).
 
 * Mon Jun 01 1998 Prospector System <bugs@redhat.com>
