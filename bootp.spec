@@ -68,21 +68,25 @@ make linux
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/usr/{sbin,man/man{5,8}}
+install -d $RPM_BUILD_ROOT/{etc,usr/{sbin,man/man{5,8}}}
 
 make DESTDIR=$RPM_BUILD_ROOT install
 make DESTDIR=$RPM_BUILD_ROOT install.man
+
+touch $RPM_BUILD_ROOT/etc/bootptab
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%attr(600, root, root) %config(noreplace) %verify(not size md5 mtime) /etc/bootptab
 %attr(755, root, root) /usr/sbin/*
 %attr(644, root,  man) /usr/man/man[58]/*
 
 %changelog
 * Wed Nov 13 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [2.4.3-9]
+- added empty /etc/bootptab %config file,
 - fixed tmp race (bootp-tmprace.patch).
 
 * Fri Sep 18 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
