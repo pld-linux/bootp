@@ -69,14 +69,14 @@ paketinin kullanýmý önerilir
 #%patch4 -p1
 
 %build
-make linux SYSDEFS="$RPM_OPT_FLAGS"
+%{__make} linux SYSDEFS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/{etc/sysconfig/rc-inetd,%{_sbindir},%{_mandir}/man{5,8}}
 
-make DESTDIR=$RPM_BUILD_ROOT install
-make DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir} install.man
+%{__make} DESTDIR=$RPM_BUILD_ROOT install
+%{__make} DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir} install.man
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/bootptab
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
