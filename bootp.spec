@@ -5,7 +5,7 @@ Summary(pl): Serwer BOOTP/DHCP wraz z programami pomocniczymi
 Summary(tr): bootp/DHCP sunucusu ve test programlarý
 Name:        bootp
 Version:     2.4.3
-Release:     8
+Release:     9
 Copyright:   BSD
 Group:       Networking/Daemons
 Source:      ftp://ftp.mc.com/pub/%{name}-%{version}.tar.Z
@@ -13,6 +13,7 @@ Patch:       bootp-2.4.3-linux.patch
 Patch1:      http://www.sghms.ac.uk/~mpreston/tools.htm/dhcp.patch
 Patch2:      bootp-2.4.3-glibc.patch
 Patch3:      bootp-2.4.3-pathfix.patch
+Patch4:      bootp-tmprace.patch
 Requires:    inetd
 Buildroot:   /tmp/%{name}-%{version}-root
 
@@ -60,6 +61,7 @@ DHCP desteðine gerek duyulan durumlarda dhcpd paketinin kullanýmý önerilir
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+#%patch4 -p1
 
 %build
 make linux
@@ -67,6 +69,7 @@ make linux
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/usr/{sbin,man/man{5,8}}
+
 make DESTDIR=$RPM_BUILD_ROOT install
 make DESTDIR=$RPM_BUILD_ROOT install.man
 
@@ -78,6 +81,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644, root,  man) /usr/man/man[58]/*
 
 %changelog
+* Wed Nov 13 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [2.4.3-9]
+- fixed tmp race (bootp-tmprace.patch).
+
 * Fri Sep 18 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [2.4.3-8]
 - added -q %setup parameter,
