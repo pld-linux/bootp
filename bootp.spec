@@ -103,7 +103,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%attr(640,root,root) %config(noreplace) %verify(not size md5 mtime) %{_sysconfdir}/bootptab
-%attr(640,root,root) /etc/sysconfig/rc-inetd/bootp
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bootptab
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rc-inetd/bootp
 %attr(755,root,root) %{_sbindir}/*
 %{_mandir}/man[58]/*
