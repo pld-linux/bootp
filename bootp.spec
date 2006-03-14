@@ -17,6 +17,7 @@ Patch2:		%{name}-2.4.3-glibc.patch
 Patch3:		%{name}-2.4.3-pathfix.patch
 Patch4:		%{name}-tmprace.patch
 Patch5:		%{name}-errno.patch
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	inetdaemon
 Requires:	rc-inetd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -90,15 +91,11 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/bootp
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload 1>&2
-else
-	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
-fi
+%service -q rc-inetd reload
 
 %postun
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload 1>&2
+if [ "$1" = 0 ]; then
+	%service -q rc-inetd reload
 fi
 
 %files
