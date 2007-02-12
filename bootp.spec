@@ -1,8 +1,8 @@
 Summary:	bootp/DHCP server and test programs
-Summary(de):	bootp/DHCP-Server und Testprogramme
-Summary(fr):	Serveur bootp/DHCP et programmes test
-Summary(pl):	Serwer bootp/DHCP wraz z programami pomocniczymi
-Summary(tr):	bootp/DHCP sunucusu ve test programlarý
+Summary(de.UTF-8):   bootp/DHCP-Server und Testprogramme
+Summary(fr.UTF-8):   Serveur bootp/DHCP et programmes test
+Summary(pl.UTF-8):   Serwer bootp/DHCP wraz z programami pomocniczymi
+Summary(tr.UTF-8):   bootp/DHCP sunucusu ve test programlarÄ±
 Name:		bootp
 Version:	2.4.3
 Release:	12
@@ -30,37 +30,37 @@ their networking information. While this server includes rudimentary
 DHCP support as well, we suggest using the dhcpd package if you need
 DHCP support, as it is much more complete.
 
-%description -l de
-Dies ist ein Server für das bootp-Protokoll, der
-Netzwerkadministratoren das Einrichten von Netzinfos für Clients über
-ein /etc/bootptab auf einem Server gestattet, so daß die Clients ihre
-Infos automatisch bekommen. Obwohl dieser Server rudimentären
+%description -l de.UTF-8
+Dies ist ein Server fÃ¼r das bootp-Protokoll, der
+Netzwerkadministratoren das Einrichten von Netzinfos fÃ¼r Clients Ã¼ber
+ein /etc/bootptab auf einem Server gestattet, so daÃŸ die Clients ihre
+Infos automatisch bekommen. Obwohl dieser Server rudimentÃ¤ren
 DHCP-Support beinhaltet, empfehlen wir den Einsatz des dhcpd-Pakets,
-wenn Sie DHCP-Unterstützung wünschen, weil sie damit umfassenderen
+wenn Sie DHCP-UnterstÃ¼tzung wÃ¼nschen, weil sie damit umfassenderen
 Support erhalten.
 
-%description -l fr
+%description -l fr.UTF-8
 C'est un serveur pour le protocole bootp, qui permet aux
-administrateurs réseau de configurer les informations pour les clients
-réseau via le fichier /etc/bootptab sur un serveur de telle manière
+administrateurs rÃ©seau de configurer les informations pour les clients
+rÃ©seau via le fichier /etc/bootptab sur un serveur de telle maniÃ¨re
 que les clients puissent automatiquement obtenir les informations.
 Bien que le serveur comprenne aussi un support rudimentaire pour dhcp,
-nous recommandons d'utiliser le package dhcp si vous désirez un
+nous recommandons d'utiliser le package dhcp si vous dÃ©sirez un
 support dhcp, car il est beaucoup plus complet.
 
-%description -l pl
-Pakiet ten zawiera serwer protoko³u bootp, który umo¿liwia zarz±dzanie
-informacjami o konfiguracji sieciowej komputerów w pliku
-/etc/bootptab, a nastêpnie dostarczenie na ¿±danie w/w informacji
-komputerom (klientom). Pomimo, ¿e program oferuje czê¶ciow± obs³ugê
-DHCP, do serwowania informacji przenoszonych za pomoc± tego protoko³u
-lepiej u¿yæ dedykowanego serwera z pakietu dhcp.
+%description -l pl.UTF-8
+Pakiet ten zawiera serwer protokoÅ‚u bootp, ktÃ³ry umoÅ¼liwia zarzÄ…dzanie
+informacjami o konfiguracji sieciowej komputerÃ³w w pliku
+/etc/bootptab, a nastÄ™pnie dostarczenie na Å¼Ä…danie w/w informacji
+komputerom (klientom). Pomimo, Å¼e program oferuje czÄ™Å›ciowÄ… obsÅ‚ugÄ™
+DHCP, do serwowania informacji przenoszonych za pomocÄ… tego protokoÅ‚u
+lepiej uÅ¼yÄ‡ dedykowanego serwera z pakietu dhcp.
 
-%description -l tr
-bootp sunucusu, istemcilerin að bilgilerini sunucu üzerindeki bir
-dosyadan almalarýna olanak verir. Bu sunucu temel DHCP desteðini
-içermekle birlikte, DHCP desteðine gerek duyulan durumlarda dhcpd
-paketinin kullanýmý önerilir
+%description -l tr.UTF-8
+bootp sunucusu, istemcilerin aÄŸ bilgilerini sunucu Ã¼zerindeki bir
+dosyadan almalarÄ±na olanak verir. Bu sunucu temel DHCP desteÄŸini
+iÃ§ermekle birlikte, DHCP desteÄŸine gerek duyulan durumlarda dhcpd
+paketinin kullanÄ±mÄ± Ã¶nerilir
 
 %prep
 %setup -q
