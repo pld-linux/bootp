@@ -1,8 +1,8 @@
 Summary:	bootp/DHCP server and test programs
-Summary(de.UTF-8):   bootp/DHCP-Server und Testprogramme
-Summary(fr.UTF-8):   Serveur bootp/DHCP et programmes test
-Summary(pl.UTF-8):   Serwer bootp/DHCP wraz z programami pomocniczymi
-Summary(tr.UTF-8):   bootp/DHCP sunucusu ve test programları
+Summary(de.UTF-8):	bootp/DHCP-Server und Testprogramme
+Summary(fr.UTF-8):	Serveur bootp/DHCP et programmes test
+Summary(pl.UTF-8):	Serwer bootp/DHCP wraz z programami pomocniczymi
+Summary(tr.UTF-8):	bootp/DHCP sunucusu ve test programları
 Name:		bootp
 Version:	2.4.3
 Release:	12
